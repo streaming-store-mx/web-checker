@@ -1,0 +1,23 @@
+name: Validador IMAP
+
+on:
+  workflow_dispatch: # Permite ejecutar el flujo manualmente con un botón
+
+jobs:
+  ejecutar-validador:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@v3
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Instalar librería IMAP
+        run: npm install imap-simple
+
+      - name: Ejecutar script de verificación
+        run: node scripts/verificar.js
