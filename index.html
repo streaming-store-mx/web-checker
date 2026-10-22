@@ -1,4 +1,35 @@
-<script>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditor de Credenciales Web</title>
+    <!-- Tailwind CSS para un diseño moderno y rápido -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="w-full max-w-2xl bg-gray-800 rounded-xl shadow-2xl p-6 border border-gray-700">
+        <h1 class="text-2xl font-bold mb-2 text-center text-cyan-400">Auditor de Cuentas Web</h1>
+        <p class="text-gray-400 text-sm mb-4 text-center">Pega tu lista de cuentas en formato correo:contraseña (una por línea).</p>
+
+        <!-- Área de texto para ingresar las cuentas -->
+        <textarea id="listaCuentas" rows="6" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-sm text-gray-200 focus:outline-none focus:border-cyan-500 mb-4" placeholder="correo1@gmail.com:contraseña1&#10;correo2@outlook.com:contraseña2"></textarea>
+
+        <!-- Botón de acción -->
+        <button onclick="iniciarProceso()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-3 rounded-lg transition duration-200 shadow-lg">
+            Iniciar Verificación
+        </button>
+
+        <!-- Consola de Resultados (Oculta al inicio) -->
+        <div id="resultado" class="mt-6 hidden">
+            <h3 class="text-sm font-semibold text-gray-300 mb-2">Consola en tiempo real:</h3>
+            <div id="log" class="w-full h-48 bg-black rounded-lg p-3 font-mono text-xs text-green-400 overflow-y-auto border border-gray-700">
+            </div>
+        </div>
+    </div>
+
+    <script>
         async function iniciarProceso() {
             const texto = document.getElementById('listaCuentas').value.trim();
             const divResultado = document.getElementById('resultado');
@@ -16,11 +47,11 @@
 
             for (let linea of lineas) {
                 const lineaLimpia = linea.trim();
-                if (!lineaLimpia || !lineaLincLimpia?.includes(':')) continue; // Nota: asegúrate de usar .includes(':')
+                if (!lineaLimpia || !lineaLimpia.includes(':')) continue;
                 
                 const partes = lineaLimpia.split(':');
                 const email = partes[0].trim();
-                const password = partes.slice(1).join(':').trim(); // Por si la contraseña lleva dos puntos
+                const password = partes.slice(1).join(':').trim();
 
                 logBox.innerHTML += `🔍 Consultando: ${email}...<br>`;
                 logBox.scrollTop = logBox.scrollHeight;
@@ -47,3 +78,5 @@
             logBox.innerHTML += "<br>✨ Proceso finalizado.";
         }
     </script>
+</body>
+</html>
