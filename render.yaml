@@ -2,5 +2,5 @@ services:
   - type: web
     name: web-checker
     env: node
-    buildCommand: npm install
+    buildCommand: npm install && npx puppeteer browsers install chrome
     startCommand: npm start
