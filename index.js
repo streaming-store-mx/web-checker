@@ -1,3 +1,11 @@
+const express = require('express');
+const cors = require('cors');
+const puppeteer = require('puppeteer');
+
+const app = express();
+app.use(express.json());
+app.use(cors());
+
 app.post('/api/verificar', async (req, res) => {
     const { email, password } = req.body;
 
@@ -7,6 +15,7 @@ app.post('/api/verificar', async (req, res) => {
 
     const domain = email.split('@')[1].toLowerCase();
     let browser;
+    let page;
 
     try {
         browser = await puppeteer.launch({
@@ -23,7 +32,7 @@ app.post('/api/verificar', async (req, res) => {
             ]
         });
 
-        const page = await browser.newPage();
+        page = await browser.newPage();
         await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36');
         await page.setViewport({ width: 1280, height: 800 });
 
@@ -79,11 +88,16 @@ app.post('/api/verificar', async (req, res) => {
         try {
             if (page) {
                 await page.screenshot({ path: 'error_debug.png' });
-                console.log("Captura de pantalla guardada como error_debug.png");
+                console.log("Captura guardada como error_debug.png");
             }
         } catch (e) {}
 
         if (browser) await browser.close();
         return res.status(500).json({ status: 'invalid', message: error.message });
     }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor con Puppeteer avanzado corriendo en el puerto ${PORT}`);
 });
