@@ -1,11 +1,3 @@
-const express = require('express');
-const cors = require('cors');
-const puppeteer = require('puppeteer');
-
-const app = express();
-app.use(express.json());
-app.use(cors());
-
 app.post('/api/verificar', async (req, res) => {
     const { email, password } = req.body;
 
@@ -13,13 +5,13 @@ app.post('/api/verificar', async (req, res) => {
         return res.json({ status: 'invalid', message: 'Faltan datos' });
     }
 
-    const domain = email.split('@')[1]?.toLowerCase();
+    const domain = email.split('@')[1].toLowerCase();
     let browser;
 
     try {
         browser = await puppeteer.launch({
             headless: true,
-            executablePath: '/data/data/com.termux/files/usr/bin/chromium-browser', // <--- Agrega esta línea aquí
+            executablePath: '/data/data/com.termux/files/usr/bin/chromium-browser',
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -32,9 +24,7 @@ app.post('/api/verificar', async (req, res) => {
         });
 
         const page = await browser.newPage();
-        
-        // Simular un navegador real de escritorio
-        await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+        await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36');
         await page.setViewport({ width: 1280, height: 800 });
 
         if (domain === 'gmail.com') {
@@ -43,7 +33,7 @@ app.post('/api/verificar', async (req, res) => {
             await page.waitForSelector('#identifierId', { timeout: 15000 });
             await page.type('#identifierId', email, { delay: 50 });
             await page.click('#identifierNext');
-            
+
             await page.waitForSelector('input[name="Passwd"]', { timeout: 15000 });
             await page.type('input[name="Passwd"]', password, { delay: 50 });
             await page.click('#passwordNext');
@@ -61,17 +51,15 @@ app.post('/api/verificar', async (req, res) => {
         } else if (['outlook.com', 'hotmail.com', 'live.com', 'msn.com'].includes(domain)) {
             // Flujo para Microsoft / Outlook
             await page.goto('https://login.live.com/', { waitUntil: 'networkidle2', timeout: 30000 });
-            
-            } catch (error) {
-    console.error("Detalle del error:", error.message);
-    // Guarda una captura de pantalla en la carpeta del proyecto cuando ocurra un error
-    try {
-        await page.screenshot({ path: 'error_debug.png' });
-        console.log("Captura de pantalla guardada como error_debug.png");
-    } catch (e) {}
-    
-    res.status(500).json({ status: "invalid", message: error.message });
-}
+
+            await page.waitForSelector('#i0116', { timeout: 15000 });
+            await page.type('#i0116', email, { delay: 50 });
+            await page.click('#idSIButton9');
+
+            await page.waitForSelector('#i0119', { timeout: 15000 });
+            await page.type('#i0119', password, { delay: 50 });
+            await page.click('#idSIButton9');
+
             await new Promise(resolve => setTimeout(resolve, 5000));
             const url = page.url();
             await browser.close();
@@ -87,12 +75,15 @@ app.post('/api/verificar', async (req, res) => {
         }
 
     } catch (error) {
-        if (browser) await browser.close();
-        return res.json({ status: 'invalid', message: 'Error en el proceso de validación' });
-    }
-});
+        console.error("Detalle del error:", error.message);
+        try {
+            if (page) {
+                await page.screenshot({ path: 'error_debug.png' });
+                console.log("Captura de pantalla guardada como error_debug.png");
+            }
+        } catch (e) {}
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor con Puppeteer avanzado corriendo en el puerto ${PORT}`);
+        if (browser) await browser.close();
+        return res.status(500).json({ status: 'invalid', message: error.message });
+    }
 });
