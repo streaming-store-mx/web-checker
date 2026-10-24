@@ -58,15 +58,15 @@ app.post('/api/verificar', async (req, res) => {
             }
 
         } else if (['outlook.com', 'hotmail.com', 'live.com', 'msn.com'].includes(domain)) {
-            // Flujo para Microsoft / Outlook
+            // Flujo actualizado para Microsoft / Outlook
             await page.goto('https://login.live.com/', { waitUntil: 'networkidle2', timeout: 30000 });
 
-            await page.waitForSelector('#i0116', { timeout: 15000 });
-            await page.type('#i0116', email, { delay: 50 });
+            await page.waitForSelector('input[name="loginfmt"]', { timeout: 15000 });
+            await page.type('input[name="loginfmt"]', email, { delay: 50 });
             await page.click('#idSIButton9');
 
-            await page.waitForSelector('#i0119', { timeout: 15000 });
-            await page.type('#i0119', password, { delay: 50 });
+            await page.waitForSelector('input[name="passwd"]', { timeout: 15000 });
+            await page.type('input[name="passwd"]', password, { delay: 50 });
             await page.click('#idSIButton9');
 
             await new Promise(resolve => setTimeout(resolve, 5000));
