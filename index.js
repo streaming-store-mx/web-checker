@@ -19,6 +19,7 @@ app.post('/api/verificar', async (req, res) => {
     try {
         browser = await puppeteer.launch({
             headless: true,
+            executablePath: '/data/data/com.termux/files/usr/bin/chromium-browser', // <--- Agrega esta línea aquí
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -26,7 +27,7 @@ app.post('/api/verificar', async (req, res) => {
                 '--disable-accelerated-2d-canvas',
                 '--disable-gpu',
                 '--single-process',
-                '--disable-blink-features=AutomationControlled' // Oculta que es un bot
+                '--disable-blink-features=AutomationControlled'
             ]
         });
 
