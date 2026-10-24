@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const puppeteer = require('puppeteer');
+const { ImapFlow } = require('imapflow');
 const app = express();
 
 app.use(express.json());
