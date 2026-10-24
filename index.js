@@ -62,14 +62,16 @@ app.post('/api/verificar', async (req, res) => {
             // Flujo para Microsoft / Outlook
             await page.goto('https://login.live.com/', { waitUntil: 'networkidle2', timeout: 30000 });
             
-            await page.waitForSelector('#i0116', { timeout: 15000 });
-            await page.type('#i0116', email, { delay: 50 });
-            await page.click('#idSIButton9');
-
-            await page.waitForSelector('#i0119', { timeout: 15000 });
-            await page.type('#i0119', password, { delay: 50 });
-            await page.click('#idSIButton9');
-
+            } catch (error) {
+    console.error("Detalle del error:", error.message);
+    // Guarda una captura de pantalla en la carpeta del proyecto cuando ocurra un error
+    try {
+        await page.screenshot({ path: 'error_debug.png' });
+        console.log("Captura de pantalla guardada como error_debug.png");
+    } catch (e) {}
+    
+    res.status(500).json({ status: "invalid", message: error.message });
+}
             await new Promise(resolve => setTimeout(resolve, 5000));
             const url = page.url();
             await browser.close();
