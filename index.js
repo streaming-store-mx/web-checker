@@ -37,14 +37,14 @@ app.post('/api/verificar', async (req, res) => {
         await page.goto('https://login.live.com/', { waitUntil: 'networkidle2', timeout: 30000 });
 
         // Escribir correo
-        await page.waitForSelector('input[name="loginfmt"]', { timeout: 10000 });
-        await page.type('input[name="loginfmt"]', email, { delay: 50 });
-        await page.click('input[type="submit"]');
+        await page.waitForSelector('#i0116', { timeout: 15000 });
+        await page.type('#i0116', email, { delay: 50 });
+        await page.click('#idSIButton9');
 
-        // Esperar a que aparezca el campo de contraseña (puede tardar un par de segundos)
-        await page.waitForSelector('input[name="passwd"]', { timeout: 10000 });
-        await page.type('input[name="passwd"]', password, { delay: 50 });
-        await page.click('input[type="submit"]');
+        // Esperar a que aparezca el campo de contraseña
+        await page.waitForSelector('#i0119', { timeout: 15000 });
+        await page.type('#i0119', password, { delay: 50 });
+        await page.click('#idSIButton9');
 
         // Esperamos un momento para ver si entra o si arroja error de credenciales
         await new Promise(resolve => setTimeout(resolve, 5000));
