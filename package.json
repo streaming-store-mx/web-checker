@@ -1,15 +1,14 @@
 {
-  "name": "web-checker-backend",
+  "name": "web-checker",
   "version": "1.0.0",
-  "description": "Backend Browser automation checker",
+  "description": "Verificador de cuentas web",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "postinstall": "npx puppeteer browsers install chrome"
+    "start": "node index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "puppeteer": "^22.0.0"
+    "imapflow": "^1.0.160"
   }
 }
