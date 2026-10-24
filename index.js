@@ -15,15 +15,17 @@ app.post('/api/verificar', async (req, res) => {
 
     let browser;
     try {
-        // Lanzamos el navegador en modo headless (invisible) con configuraciones para servidor
+        // Lanzamos el navegador en modo headless con configuraciones optimizadas para servidores
         browser = await puppeteer.launch({
             headless: true,
+            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome-stable',
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
                 '--disable-accelerated-2d-canvas',
-                '--disable-gpu'
+                '--disable-gpu',
+                '--single-process' // Ayuda a ahorrar memoria en entornos de contenedores
             ]
         });
 
